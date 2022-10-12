@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io"
+	"image"
 	"log"
 
 	"github.com/suapapa/thermal-station/input"
@@ -11,15 +11,27 @@ type Printer interface {
 	PrintOrd(*input.Ord) error
 	PrintAddr(*input.Addr) error
 	PrintQR(string) error
-	PrintImg(io.Reader, int) error
+	PrintImg(image.Image, int) error
 }
+
+var (
+	receiptPrinter, labelPrinter Printer
+)
 
 func getPrinter(printerType string) Printer {
 	switch printerType {
 	case "receipt":
-		return NewReceiptPrinter()
+		if receiptPrinter != nil {
+			return receiptPrinter
+		}
+		receiptPrinter = NewReceiptPrinter()
+		return receiptPrinter
 	case "label":
-		return NewLabelPrinter()
+		if labelPrinter != nil {
+			return labelPrinter
+		}
+		labelPrinter = NewLabelPrinter()
+		return labelPrinter
 	}
 	return NewLogoutPrinter()
 }
@@ -47,7 +59,7 @@ func (lp *LogoutPrinter) PrintQR(content string) error {
 	return nil
 }
 
-func (lp *LogoutPrinter) PrintImg(r io.Reader, dpi int) error {
-	log.Printf("img: %v, dpi=%d", r, dpi)
+func (lp *LogoutPrinter) PrintImg(img image.Image, dpi int) error {
+	log.Printf("img: %v, dpi=%d", img, dpi)
 	return nil
 }

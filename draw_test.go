@@ -1,10 +1,14 @@
 package main
 
 import (
+	"image"
+	"image/png"
+	"os"
 	"testing"
 
 	"github.com/pkg/errors"
 	"github.com/suapapa/thermal-station/input"
+	"github.com/suapapa/thermal-station/ql800_62"
 )
 
 var (
@@ -43,7 +47,7 @@ var (
 // }
 
 func TestDrawItems(t *testing.T) {
-	img, err := drawItems(45, ord.Items)
+	img, err := drawItems(ql800_62.MaxWidth, ord.ID, ord.Items)
 	if err != nil {
 		t.Error(errors.Wrap(err, "fail to draw items"))
 	}
@@ -53,14 +57,14 @@ func TestDrawItems(t *testing.T) {
 }
 
 func TestDrawAddressXXX(t *testing.T) {
-	img, err := drawAddressFrom(45, fromAddr)
+	img, err := drawAddressFrom(ql800_62.MaxWidth, fromAddr)
 	if err != nil {
 		t.Error(errors.Wrap(err, "fail to draw address"))
 	}
 	if err := saveImg2Png(img, "addr_from.png"); err != nil {
 		t.Error(err)
 	}
-	img, err = drawAddressTo(ord.ID, toAddr)
+	img, err = drawAddressTo(ql800_62.MaxWidth, toAddr)
 	if err != nil {
 		t.Error(errors.Wrap(err, "fail to draw address"))
 	}
@@ -69,37 +73,16 @@ func TestDrawAddressXXX(t *testing.T) {
 	}
 }
 
-func TestDrawAddress(t *testing.T) {
-	from, to := fromAddr, toAddr
-	img, err := drawAddress(
-		ord.ID,
-		[]string{from.Line1, from.Line2},
-		from.Name,
-		"",
-		fsFromAddr, fsFromName,
-		ql800MaxPix,
-		-1,
-	)
+func saveImg2Png(img image.Image, pngFN string) error {
+	f, err := os.Create(pngFN)
 	if err != nil {
-		t.Error(errors.Wrap(err, "fail to draw address"))
+		return errors.Wrap(err, "fail to savePNG")
 	}
-	if err := saveImg2Png(img, "draw_from.png"); err != nil {
-		t.Error(err)
+	defer f.Close()
+
+	if err = png.Encode(f, img); err != nil {
+		return errors.Wrap(err, "fail to savePNG")
 	}
 
-	img, err = drawAddress(
-		ord.ID,
-		[]string{to.Line1, to.Line2},
-		to.Name,
-		"",
-		fsToAddr, fsToName,
-		(ql800MaxPix*3)/2,
-		ql800MaxPix,
-	)
-	if err != nil {
-		t.Error(errors.Wrap(err, "fail to draw address"))
-	}
-	if err := saveImg2Png(img, "draw_to.png"); err != nil {
-		t.Error(err)
-	}
+	return nil
 }

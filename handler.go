@@ -1,6 +1,9 @@
 package main
 
 import (
+	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"net/http"
 	"strconv"
 
@@ -29,7 +32,13 @@ func imgHandler(c *gin.Context) {
 	}
 
 	printer := getPrinter(c.Param("printer"))
-	printer.PrintImg(file, dpi)
+	img, _, err := image.Decode(file)
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	printer.PrintImg(img, dpi)
 }
 
 func qrHandler(c *gin.Context) {

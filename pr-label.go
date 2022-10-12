@@ -1,11 +1,13 @@
 package main
 
 import (
-	"io"
+	"image"
 	"log"
 
 	"github.com/pkg/errors"
+	"github.com/skip2/go-qrcode"
 	"github.com/suapapa/thermal-station/input"
+	"github.com/suapapa/thermal-station/ql800_62"
 )
 
 type LabelPrinter struct{}
@@ -16,54 +18,53 @@ func NewLabelPrinter() *LabelPrinter {
 
 func (lp *LabelPrinter) PrintOrd(ord *input.Ord) error {
 	log.Printf("label-ord: %v", ord)
-	if err := labelItems(ord.ID, ord.Items); err != nil {
+	img, err := drawItems(ql800_62.MaxWidth, ord.ID, ord.Items)
+	if err != nil {
 		return errors.Wrap(err, "fail to print label ord")
 	}
-	return nil
+	err = ql800_62.PrintLabel(img)
+	if err != nil {
+		return errors.Wrap(err, "fail to print label ord")
+	}
+	return lp.printImg(img)
 }
 
 func (lp *LabelPrinter) PrintAddr(addr *input.Addr) error {
 	log.Printf("label-addr: %v", addr)
+	var img image.Image
+	var err error
 	switch addr.Vertical {
 	case false: // From
-		if err := labelAddr(-1, addr); err != nil {
+		if img, err = drawAddressFrom(-1, addr); err != nil {
 			return errors.Wrap(err, "fail to print label addr")
 		}
 	case true: // To
-		if err := labelAddrVertical(-1, addr); err != nil {
+		if img, err = drawAddressTo(-1, addr); err != nil {
 			return errors.Wrap(err, "fail to print label addr")
 		}
 	}
-	return nil
+	return lp.printImg(img)
 }
 
 func (lp *LabelPrinter) PrintQR(content string) error {
 	log.Printf("label-qr: %v", content)
-	// png, err := qrcode.Encode(content, qrcode.Medium, receiptMaxWidth)
-	// if err != nil {
-	// 	return errors.Wrap(err, "fail to print recipt qr")
-	// }
-
-	// pngReader := bytes.NewReader(png)
-	// if err := receiptPrImage8bitDouble(pngReader); err != nil {
-	// 	return errors.Wrap(err, "fail to print recipt qr")
-	// }
-	// cutPaper()
-	return nil
+	qrc, err := qrcode.New(content, qrcode.Medium)
+	if err != nil {
+		return errors.Wrap(err, "fail to print recipt qr")
+	}
+	img := qrc.Image(ql800_62.MaxWidth)
+	return lp.printImg(img)
 }
 
-func (lp *LabelPrinter) PrintImg(r io.Reader, dpi int) error {
-	log.Printf("label-img: %v", r)
-	// switch dpi {
-	// case 200:
-	// 	if err := receiptPrImage24bitDouble(r); err != nil {
-	// 		return errors.Wrap(err, "fail to print recipt img")
-	// 	}
-	// default:
-	// 	if err := receiptPrImage8bitDouble(r); err != nil {
-	// 		return errors.Wrap(err, "fail to print recipt img")
-	// 	}
-	// }
-	// cutPaper()
+func (lp *LabelPrinter) PrintImg(img image.Image, dpi int) error {
+	log.Printf("label-img: %v", img)
+	return lp.printImg(img)
+}
+
+func (lp *LabelPrinter) printImg(img image.Image) error {
+	err := ql800_62.PrintLabel(img)
+	if err != nil {
+		return errors.Wrap(err, "fail to print img")
+	}
 	return nil
 }

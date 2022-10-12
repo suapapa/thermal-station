@@ -1,58 +1,67 @@
 package main
 
 import (
-	"bytes"
-	"io"
+	"image"
 	"log"
 
 	"github.com/pkg/errors"
 	"github.com/skip2/go-qrcode"
 	"github.com/suapapa/thermal-station/input"
+	"github.com/suapapa/thermal-station/receipt"
 )
 
-type ReceiptPrinter struct{}
+type ReceiptPrinter struct {
+	pr *receipt.Printer
+}
 
 func NewReceiptPrinter() *ReceiptPrinter {
-	return &ReceiptPrinter{}
+	var pr *receipt.Printer
+	if flagUsbDev != "" { // /dev/usb/lp0
+		pr = receipt.NewUSBPrinter(flagUsbDev)
+	} else {
+		pr = receipt.NewSerialPrinter(flagSerialDev, flagSerialSpeed)
+	}
+	return &ReceiptPrinter{pr: pr}
 }
 
-func (lp *ReceiptPrinter) PrintOrd(ord *input.Ord) error {
+func (p *ReceiptPrinter) PrintOrd(ord *input.Ord) error {
 	log.Printf("receipt-ord: %v", ord)
+	// TODO: TBD
 	return nil
 }
 
-func (lp *ReceiptPrinter) PrintAddr(addr *input.Addr) error {
+func (p *ReceiptPrinter) PrintAddr(addr *input.Addr) error {
 	log.Printf("receipt-addr: %v", addr)
+	// TODO: TBD
 	return nil
 }
 
-func (lp *ReceiptPrinter) PrintQR(content string) error {
+func (p *ReceiptPrinter) PrintQR(content string) error {
 	log.Printf("receipt-qr: %v", content)
-	png, err := qrcode.Encode(content, qrcode.Medium, receiptMaxWidth)
+	qrc, err := qrcode.New(content, qrcode.Medium)
 	if err != nil {
 		return errors.Wrap(err, "fail to print recipt qr")
 	}
 
-	pngReader := bytes.NewReader(png)
-	if err := receiptPrImage8bitDouble(pngReader); err != nil {
+	if err := p.pr.PrintImage8bitDouble(qrc.Image(receipt.MaxWidth)); err != nil {
 		return errors.Wrap(err, "fail to print recipt qr")
 	}
-	cutPaper()
+	p.pr.CutPaper()
 	return nil
 }
 
-func (lp *ReceiptPrinter) PrintImg(r io.Reader, dpi int) error {
-	log.Printf("receipt-img: %v", r)
+func (p *ReceiptPrinter) PrintImg(img image.Image, dpi int) error {
+	log.Printf("receipt-img: %v, dpi=%d", img, dpi)
 	switch dpi {
 	case 200:
-		if err := receiptPrImage24bitDouble(r); err != nil {
+		if err := p.pr.PrintImage24bitDouble(img); err != nil {
 			return errors.Wrap(err, "fail to print recipt img")
 		}
 	default:
-		if err := receiptPrImage8bitDouble(r); err != nil {
+		if err := p.pr.PrintImage8bitDouble(img); err != nil {
 			return errors.Wrap(err, "fail to print recipt img")
 		}
 	}
-	cutPaper()
+	p.pr.CutPaper()
 	return nil
 }

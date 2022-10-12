@@ -1,6 +1,16 @@
 # Thermal Station
 
-TODO: update README
+This is a combine of following projects:
+- https://github.com/suapapa/img_receipt : Print image on receipt printer
+- https://github.com/suapapa/pr_label : Print address label on ql800, brother's label printer (uing brother-ql)
+- https://github.com/suapapa/gb_noti : Print guestboot on receipt printer
+
+## API
+
+## MQTT
+
+
+## Tests
 
 ```bash
 curl -X POST \
