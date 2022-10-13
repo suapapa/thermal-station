@@ -69,6 +69,15 @@ func (p *ReceiptPrinter) PrintQR(content string) error {
 func (p *ReceiptPrinter) PrintImg(img image.Image) error {
 	// log.Debugf("receipt-img: %v, dpi=%d", img, flagDPI)
 	log.Debugf("receipt-img: dpi=%d", flagDPI)
+	if err := p.PrintImgCont(img); err != nil {
+		return errors.Wrap(err, "fail to print img")
+	}
+	return p.Cut()
+}
+
+func (p *ReceiptPrinter) PrintImgCont(img image.Image) error {
+	// log.Debugf("receipt-img: %v, dpi=%d", img, flagDPI)
+	log.Debugf("receipt-img: dpi=%d", flagDPI)
 	switch flagDPI {
 	case 200:
 		if err := p.pr.PrintImage24bitDouble(img); err != nil {
@@ -79,6 +88,10 @@ func (p *ReceiptPrinter) PrintImg(img image.Image) error {
 			return errors.Wrap(err, "fail to print recipt img")
 		}
 	}
-	p.pr.CutPaper()
+	// p.pr.CutPaper()
 	return nil
+}
+
+func (p *ReceiptPrinter) Cut() error {
+	return p.pr.CutPaper()
 }

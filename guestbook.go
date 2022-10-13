@@ -102,6 +102,24 @@ func getGBFromMsg(msgBytes []byte) (*msg.GuestBook, error) {
 
 // 각 줄을 이미지로 만들어 출력
 func printToReceipt(c *msg.GuestBook) error {
+	pr := NewReceiptPrinter()
+
+	iFF, err := getFont(36)
+	if err != nil {
+		return errors.Wrap(err, "fail to print")
+	}
+	infos := []string{c.TimeStamp, c.From}
+	for _, l := range infos {
+		img, err := draw.Txt2Img(iFF, receipt.MaxWidth, l)
+		if err != nil {
+			return errors.Wrap(err, "fail to print")
+		}
+		err = pr.PrintImgCont(img)
+		if err != nil {
+			return errors.Wrap(err, "fail to print")
+		}
+	}
+
 	mFF, err := getFont(48)
 	if err != nil {
 		return errors.Wrap(err, "fail to print")
@@ -110,23 +128,19 @@ func printToReceipt(c *msg.GuestBook) error {
 	if len(lines) == 0 {
 		return fmt.Errorf("no content")
 	}
-
-	lines = append([]string{c.TimeStamp, c.From}, lines...)
-	pr := NewReceiptPrinter()
-
 	lines = append(lines, " ") // TODO: 마지막 줄이 잘려서 패딩 라인 붙임
 	for _, l := range lines {
 		img, err := draw.Txt2Img(mFF, receipt.MaxWidth, l)
 		if err != nil {
 			return errors.Wrap(err, "fail to print")
 		}
-		err = pr.PrintImg(img)
+		err = pr.PrintImgCont(img)
 		if err != nil {
 			return errors.Wrap(err, "fail to print")
 		}
 	}
 
-	return nil
+	return pr.Cut()
 }
 
 func getFont(size float64) (font.Face, error) {
