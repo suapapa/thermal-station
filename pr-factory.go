@@ -11,7 +11,7 @@ type Printer interface {
 	PrintOrd(*input.Ord) error
 	PrintAddr(*input.Addr) error
 	PrintQR(string) error
-	PrintImg(image.Image, int) error
+	PrintImg(image.Image) error
 }
 
 var (
@@ -59,7 +59,7 @@ func (lp *LogoutPrinter) PrintQR(content string) error {
 	return nil
 }
 
-func (lp *LogoutPrinter) PrintImg(img image.Image, dpi int) error {
-	log.Printf("img: %v, dpi=%d", img, dpi)
+func (lp *LogoutPrinter) PrintImg(img image.Image) error {
+	log.Printf("img: %v, dpi=%d", img, flagDPI)
 	return nil
 }

@@ -56,7 +56,7 @@ func (lp *LabelPrinter) PrintQR(content string) error {
 	return lp.printImg(img)
 }
 
-func (lp *LabelPrinter) PrintImg(img image.Image, dpi int) error {
+func (lp *LabelPrinter) PrintImg(img image.Image) error {
 	log.Printf("label-img: %v", img)
 	return lp.printImg(img)
 }

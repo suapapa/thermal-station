@@ -25,10 +25,15 @@ func imgHandler(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	dpi, err := strconv.Atoi(c.Query("dpi"))
-	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
+
+	// override dpi
+	dpiStr := c.Query("dpi")
+	if dpiStr != "" {
+		flagDPI, err = strconv.Atoi(dpiStr)
+		if err != nil {
+			c.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
 	}
 
 	printer := getPrinter(c.Param("printer"))
@@ -38,7 +43,7 @@ func imgHandler(c *gin.Context) {
 		return
 	}
 
-	printer.PrintImg(img, dpi)
+	printer.PrintImg(img)
 }
 
 func qrHandler(c *gin.Context) {

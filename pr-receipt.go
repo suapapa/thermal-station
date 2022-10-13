@@ -26,7 +26,21 @@ func NewReceiptPrinter() *ReceiptPrinter {
 
 func (p *ReceiptPrinter) PrintOrd(ord *input.Ord) error {
 	log.Printf("receipt-ord: %v", ord)
-	// TODO: TBD
+	img, err := drawItems(receipt.MaxWidth, ord.ID, ord.Items)
+	if err != nil {
+		return errors.Wrap(err, "fail to print recipt ord")
+	}
+	switch flagDPI {
+	case 200:
+		if err := p.pr.PrintImage24bitDouble(img); err != nil {
+			return errors.Wrap(err, "fail to print recipt img")
+		}
+	default:
+		if err := p.pr.PrintImage8bitDouble(img); err != nil {
+			return errors.Wrap(err, "fail to print recipt img")
+		}
+	}
+	p.pr.CutPaper()
 	return nil
 }
 
@@ -50,9 +64,9 @@ func (p *ReceiptPrinter) PrintQR(content string) error {
 	return nil
 }
 
-func (p *ReceiptPrinter) PrintImg(img image.Image, dpi int) error {
-	log.Printf("receipt-img: %v, dpi=%d", img, dpi)
-	switch dpi {
+func (p *ReceiptPrinter) PrintImg(img image.Image) error {
+	log.Printf("receipt-img: %v, dpi=%d", img, flagDPI)
+	switch flagDPI {
 	case 200:
 		if err := p.pr.PrintImage24bitDouble(img); err != nil {
 			return errors.Wrap(err, "fail to print recipt img")
