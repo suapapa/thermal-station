@@ -12,11 +12,33 @@ import (
 )
 
 func ordHandler(c *gin.Context) {
-	// printer := getPrinter(c.Param("printer"))
+	var ord input.Ord
+	if err := c.ShouldBindJSON(&ord); err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			gin.H{
+				"status": http.StatusBadRequest,
+				"error":  err.Error(),
+			},
+		)
+		return
+	}
+	getPrinter(c.Param("printer")).PrintOrd(&ord)
 }
 
 func addrHandler(c *gin.Context) {
-	// printer := getPrinter(c.Param("printer"))
+	var addr input.Addr
+	if err := c.ShouldBindJSON(&addr); err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			gin.H{
+				"status": http.StatusBadRequest,
+				"error":  err.Error(),
+			},
+		)
+		return
+	}
+	getPrinter(c.Param("printer")).PrintAddr(&addr)
 }
 
 func imgHandler(c *gin.Context) {
@@ -31,28 +53,36 @@ func imgHandler(c *gin.Context) {
 	if dpiStr != "" {
 		flagDPI, err = strconv.Atoi(dpiStr)
 		if err != nil {
-			c.AbortWithStatus(http.StatusBadRequest)
+			c.AbortWithStatusJSON(
+				http.StatusBadRequest,
+				gin.H{
+					"status": http.StatusBadRequest,
+					"error":  err.Error(),
+				},
+			)
 			return
 		}
 	}
 
-	printer := getPrinter(c.Param("printer"))
 	img, _, err := image.Decode(file)
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-
-	printer.PrintImg(img)
+	getPrinter(c.Param("printer")).PrintImg(img)
 }
 
 func qrHandler(c *gin.Context) {
-	var input input.QR
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
+	var qr input.QR
+	if err := c.ShouldBindJSON(&qr); err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			gin.H{
+				"status": http.StatusBadRequest,
+				"error":  err.Error(),
+			},
+		)
 		return
 	}
-
-	printer := getPrinter(c.Param("printer"))
-	printer.PrintQR(input.Content)
+	getPrinter(c.Param("printer")).PrintQR(qr.Content)
 }
