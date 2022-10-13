@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -29,12 +28,14 @@ var (
 )
 
 func guestbook(ctx context.Context, conf Config) {
+	log.Infof("guestbook start")
+
 	confSub = conf
 	eg, _ := errgroup.WithContext(ctx)
 	eg.Go(subF)
 	eg.Go(checkPork)
 	err := eg.Wait()
-	log.Printf("eg stop: %v", err)
+	log.Infof("guestbook stop: %v", err)
 }
 
 // ---
@@ -45,25 +46,25 @@ func subF() error {
 		return errors.Wrap(err, "fail to sub")
 	}
 	defer mqttC.Disconnect(1000)
-	log.Println("sub: connected with MQTT broker")
+	log.Debug("sub: connected with MQTT broker")
 	mqttC.Subscribe(topicGB, 1,
 		func(mqttClient mqtt.Client, mqttMsg mqtt.Message) {
 			topic, payload := mqttMsg.Topic(), mqttMsg.Payload()
-			log.Printf("got %v from %s", string(payload), topic)
+			log.Infof("got %v from %s", string(payload), topic)
 
 			switch topic {
 			case "homin-dev/gb":
 				lastPork = time.Now()
 				if gb, err := getGBFromMsg(mqttMsg.Payload()); err != nil {
-					log.Printf("err: %v", errors.Wrap(err, "fail in sub"))
+					log.Errorf("fail to sub: %v", err)
 				} else {
 					if err := printToReceipt(gb); err != nil {
-						log.Printf("err: %v", errors.Wrap(err, "fail in sub"))
+						log.Errorf("fail to sub: %v", err)
 					}
 				}
 
 			default:
-				log.Printf("err: unknown topic %s", topic)
+				log.Errorf("unknown topic %s", topic)
 			}
 		},
 	)

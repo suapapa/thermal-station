@@ -6,7 +6,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
-	"log"
 	"os"
 
 	"github.com/lestrrat-go/dither"
@@ -30,7 +29,7 @@ type Printer struct {
 func NewUSBPrinter(devPath string) *Printer {
 	dev, err := os.OpenFile(devPath, os.O_RDWR, 0)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	bufW := bufio.NewWriter(dev)
 
@@ -48,7 +47,7 @@ func NewSerialPrinter(devPath string, speed int) *Printer {
 	c := &serial.Config{Name: devPath, Baud: speed}
 	dev, err := serial.OpenPort(c)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	bufW := bufio.NewWriter(dev)
 
@@ -90,7 +89,7 @@ func (p *Printer) PrintImage8bitDouble(img image.Image) error {
 				dataByte |= bit
 			}
 			if dataBufIdx >= len(dataBuf) {
-				log.Printf("dbIdx=%d, dbLen=%d", dataBufIdx, len(dataBuf))
+				// log.Printf("dbIdx=%d, dbLen=%d", dataBufIdx, len(dataBuf))
 				break
 			}
 			dataBuf[dataBufIdx] = dataByte
@@ -110,7 +109,7 @@ func (p *Printer) PrintImage24bitDouble(img image.Image) error {
 	nH := byte(w / 256)
 	nL := byte(w % 256)
 	mode := byte(33)
-	log.Println(nL, nH, mode)
+	// log.Println(nL, nH, mode)
 	cmdBuf := []byte{0x1B, 0x2A, mode, nL, nH}
 
 	dataBufIdx := 0
@@ -130,7 +129,7 @@ func (p *Printer) PrintImage24bitDouble(img image.Image) error {
 					dataByte |= bit
 				}
 				if dataBufIdx >= len(dataBuf) {
-					log.Printf("dbIdx=%d, dbLen=%d", dataBufIdx, len(dataBuf))
+					// log.Printf("dbIdx=%d, dbLen=%d", dataBufIdx, len(dataBuf))
 					break
 				}
 				dataBuf[dataBufIdx] = dataByte

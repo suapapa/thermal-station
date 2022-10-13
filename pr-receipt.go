@@ -2,7 +2,6 @@ package main
 
 import (
 	"image"
-	"log"
 
 	"github.com/pkg/errors"
 	"github.com/skip2/go-qrcode"
@@ -25,7 +24,7 @@ func NewReceiptPrinter() *ReceiptPrinter {
 }
 
 func (p *ReceiptPrinter) PrintOrd(ord *input.Ord) error {
-	log.Printf("receipt-ord: %v", ord)
+	log.Debugf("receipt-ord: %v", ord)
 	img, err := drawItems(receipt.MaxWidth, ord.ID, ord.Items)
 	if err != nil {
 		return errors.Wrap(err, "fail to print recipt ord")
@@ -45,13 +44,13 @@ func (p *ReceiptPrinter) PrintOrd(ord *input.Ord) error {
 }
 
 func (p *ReceiptPrinter) PrintAddr(addr *input.Addr) error {
-	log.Printf("receipt-addr: %v", addr)
+	log.Debugf("receipt-addr: %v", addr)
 	// TODO: TBD
 	return nil
 }
 
 func (p *ReceiptPrinter) PrintQR(content string) error {
-	log.Printf("receipt-qr: %v", content)
+	log.Debugf("receipt-qr: %v", content)
 	qrc, err := qrcode.New(content, qrcode.Medium)
 	if err != nil {
 		return errors.Wrap(err, "fail to print recipt qr")
@@ -65,7 +64,7 @@ func (p *ReceiptPrinter) PrintQR(content string) error {
 }
 
 func (p *ReceiptPrinter) PrintImg(img image.Image) error {
-	log.Printf("receipt-img: %v, dpi=%d", img, flagDPI)
+	log.Debugf("receipt-img: %v, dpi=%d", img, flagDPI)
 	switch flagDPI {
 	case 200:
 		if err := p.pr.PrintImage24bitDouble(img); err != nil {

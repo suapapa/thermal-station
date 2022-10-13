@@ -2,7 +2,6 @@ package main
 
 import (
 	"image"
-	"log"
 
 	"github.com/pkg/errors"
 	"github.com/skip2/go-qrcode"
@@ -17,7 +16,7 @@ func NewLabelPrinter() *LabelPrinter {
 }
 
 func (lp *LabelPrinter) PrintOrd(ord *input.Ord) error {
-	log.Printf("label-ord: %v", ord)
+	log.Debugf("label-ord: %v", ord)
 	img, err := drawItems(ql800_62.MaxWidth, ord.ID, ord.Items)
 	if err != nil {
 		return errors.Wrap(err, "fail to print label ord")
@@ -30,7 +29,7 @@ func (lp *LabelPrinter) PrintOrd(ord *input.Ord) error {
 }
 
 func (lp *LabelPrinter) PrintAddr(addr *input.Addr) error {
-	log.Printf("label-addr: %v", addr)
+	log.Debugf("label-addr: %v", addr)
 	var img image.Image
 	var err error
 	switch addr.Vertical {
@@ -47,7 +46,7 @@ func (lp *LabelPrinter) PrintAddr(addr *input.Addr) error {
 }
 
 func (lp *LabelPrinter) PrintQR(content string) error {
-	log.Printf("label-qr: %v", content)
+	log.Debugf("label-qr: %v", content)
 	qrc, err := qrcode.New(content, qrcode.Medium)
 	if err != nil {
 		return errors.Wrap(err, "fail to print recipt qr")
@@ -57,7 +56,7 @@ func (lp *LabelPrinter) PrintQR(content string) error {
 }
 
 func (lp *LabelPrinter) PrintImg(img image.Image) error {
-	log.Printf("label-img: %v", img)
+	log.Debugf("label-img: %v", img)
 	return lp.printImg(img)
 }
 

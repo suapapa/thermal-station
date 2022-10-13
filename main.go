@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +22,7 @@ var (
 )
 
 func main() {
-	log.Printf("%s-%s", programName, programVer)
+	log.Infof("%s-%s", programName, programVer)
 
 	flag.IntVar(&flagDPI, "dpi", 200, "receipt printer DPI (100 or 200)")
 	flag.StringVar(&flagSerialDev, "s", "/dev/ttyACM0", "serial device")

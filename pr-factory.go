@@ -2,7 +2,6 @@ package main
 
 import (
 	"image"
-	"log"
 
 	"github.com/suapapa/thermal-station/input"
 )
@@ -45,21 +44,21 @@ func NewLogoutPrinter() *LogoutPrinter {
 }
 
 func (lp *LogoutPrinter) PrintOrd(ord *input.Ord) error {
-	log.Printf("ord: %v", ord)
+	log.Infof("ord: %v", ord)
 	return nil
 }
 
 func (lp *LogoutPrinter) PrintAddr(addr *input.Addr) error {
-	log.Printf("addr: %v", addr)
+	log.Infof("addr: %v", addr)
 	return nil
 }
 
 func (lp *LogoutPrinter) PrintQR(content string) error {
-	log.Printf("qr: %v", content)
+	log.Infof("qr: %v", content)
 	return nil
 }
 
 func (lp *LogoutPrinter) PrintImg(img image.Image) error {
-	log.Printf("img: %v, dpi=%d", img, flagDPI)
+	log.Infof("img: %v, dpi=%d", img, flagDPI)
 	return nil
 }
