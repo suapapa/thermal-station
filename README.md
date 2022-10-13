@@ -1,9 +1,9 @@
 # Thermal Station
 
-This is a combine of following projects:
-- https://github.com/suapapa/img_receipt : Print image on receipt printer
-- https://github.com/suapapa/pr_label : Print address label on ql800, brother's label printer (uing brother-ql)
-- https://github.com/suapapa/gb_noti : Print guestboot on receipt printer
+This project combines following projects:
+- [img-receipt](https://github.com/suapapa/img-receipt) : Print image on receipt printer
+- [pr_label](https://github.com/suapapa/pr_label) : Print address label on ql800, brother's label printer (uing brother-ql)
+- [gb-noti](https://github.com/suapapa/gb-noti) : Print guestboot on receipt printer
 
 ## API
 
