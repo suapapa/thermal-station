@@ -29,9 +29,10 @@ func getPrinter(printerType string) Printer {
 		if labelPrinter != nil {
 			return labelPrinter
 		}
-		labelPrinter = NewLabelPrinter()
+		labelPrinter = NewLabelPrinter(flagLabelPrinterDev)
 		return labelPrinter
 	}
+	log.Errorf("unknown printer, %s", printerType)
 	return NewLogoutPrinter()
 }
 

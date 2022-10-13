@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -18,7 +19,11 @@ var (
 	flagSerialSpeed int
 	flagUsbDev      string
 
+	flagLabelPrinterDev string
+
 	flagFontPath string
+
+	flagDebug bool
 )
 
 func main() {
@@ -29,7 +34,13 @@ func main() {
 	flag.IntVar(&flagSerialSpeed, "ss", 9600, "serial speed")
 	flag.StringVar(&flagUsbDev, "u", "", "if specify usb lp device -s will be ignored")
 	flag.StringVar(&flagFontPath, "f", "", "external font path to use")
+	flag.StringVar(&flagLabelPrinterDev, "l", "/dev/usb/lp0", "labelPrinter dev")
+	flag.BoolVar(&flagDebug, "debug", false, "print debug logs")
 	flag.Parse()
+
+	if flagDebug {
+		log.Logger.SetLevel(logrus.DebugLevel)
+	}
 
 	r := gin.Default()
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB

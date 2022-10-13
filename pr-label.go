@@ -9,10 +9,14 @@ import (
 	"github.com/suapapa/thermal-station/ql800_62"
 )
 
-type LabelPrinter struct{}
+type LabelPrinter struct {
+	dev string
+}
 
-func NewLabelPrinter() *LabelPrinter {
-	return &LabelPrinter{}
+func NewLabelPrinter(dev string) *LabelPrinter {
+	return &LabelPrinter{
+		dev: dev,
+	}
 }
 
 func (lp *LabelPrinter) PrintOrd(ord *input.Ord) error {
@@ -21,11 +25,11 @@ func (lp *LabelPrinter) PrintOrd(ord *input.Ord) error {
 	if err != nil {
 		return errors.Wrap(err, "fail to print label ord")
 	}
-	err = ql800_62.PrintLabel(img)
-	if err != nil {
-		return errors.Wrap(err, "fail to print label ord")
-	}
-	return lp.printImg(img)
+	// err = ql800_62.PrintLabel(img)
+	// if err != nil {
+	// 	return errors.Wrap(err, "fail to print label ord")
+	// }
+	return lp.PrintImg(img)
 }
 
 func (lp *LabelPrinter) PrintAddr(addr *input.Addr) error {
@@ -37,12 +41,13 @@ func (lp *LabelPrinter) PrintAddr(addr *input.Addr) error {
 		if img, err = drawAddressFrom(-1, addr); err != nil {
 			return errors.Wrap(err, "fail to print label addr")
 		}
-	case true: // To
+		return lp.printImg(img, 0)
+	default: // case true: // To
 		if img, err = drawAddressTo(-1, addr); err != nil {
 			return errors.Wrap(err, "fail to print label addr")
 		}
+		return lp.printImg(img, 90)
 	}
-	return lp.printImg(img)
 }
 
 func (lp *LabelPrinter) PrintQR(content string) error {
@@ -52,16 +57,16 @@ func (lp *LabelPrinter) PrintQR(content string) error {
 		return errors.Wrap(err, "fail to print recipt qr")
 	}
 	img := qrc.Image(ql800_62.MaxWidth)
-	return lp.printImg(img)
+	return lp.PrintImg(img)
 }
 
 func (lp *LabelPrinter) PrintImg(img image.Image) error {
-	log.Debugf("label-img: %v", img)
-	return lp.printImg(img)
+	// log.Debugf("label-img: %v", img)
+	return lp.printImg(img, 0)
 }
 
-func (lp *LabelPrinter) printImg(img image.Image) error {
-	err := ql800_62.PrintLabel(img)
+func (lp *LabelPrinter) printImg(img image.Image, rotate int) error {
+	err := ql800_62.PrintLabel(lp.dev, img, rotate)
 	if err != nil {
 		return errors.Wrap(err, "fail to print img")
 	}

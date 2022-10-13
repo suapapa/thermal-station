@@ -7,7 +7,29 @@ This is a combine of following projects:
 
 ## API
 
+### 주문 목록
+- `/v1/["receipt"|"label"]/ord`
+
+### 주소 출력
+- `/v1/["receipt"|"label"]/addr`
+
+### 이미지 출력
+- `/v1/["receipt"|"label"]/img`
+```bash
+curl -F "img=@./_img/Lenna.png" http://opi-hangulclock.local:8080/v1/receipt/img
+```
+
+### QR코드 출력
+- `/v1/["receipt"|"label"]/qr`
+```bash
+curl -X POST -d `{"content": "https://homin.dev"}` http://opi-hangulclock.local:8080/v1/label/qr
+```
+
+
 ## MQTT
+
+[방명록 출력 시스템](https://homin.dev/blog/post/20220910_live_print_guestbook_with_mqtt/)에서
+영수증 프린터로 방명록을 출력하는 프로그램.
 
 
 ## Tests

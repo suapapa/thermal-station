@@ -3,6 +3,7 @@ package main
 import (
 	"image"
 
+	"github.com/nfnt/resize"
 	"github.com/pkg/errors"
 	"github.com/skip2/go-qrcode"
 	"github.com/suapapa/thermal-station/input"
@@ -55,8 +56,10 @@ func (p *ReceiptPrinter) PrintQR(content string) error {
 	if err != nil {
 		return errors.Wrap(err, "fail to print recipt qr")
 	}
+	qrImg := qrc.Image(receipt.MaxWidth)
+	qrImg = resize.Resize(receipt.MaxWidth, receipt.MaxWidth/3, qrImg, resize.NearestNeighbor)
 
-	if err := p.pr.PrintImage8bitDouble(qrc.Image(receipt.MaxWidth)); err != nil {
+	if err := p.pr.PrintImage8bitDouble(qrImg); err != nil {
 		return errors.Wrap(err, "fail to print recipt qr")
 	}
 	p.pr.CutPaper()
@@ -64,7 +67,8 @@ func (p *ReceiptPrinter) PrintQR(content string) error {
 }
 
 func (p *ReceiptPrinter) PrintImg(img image.Image) error {
-	log.Debugf("receipt-img: %v, dpi=%d", img, flagDPI)
+	// log.Debugf("receipt-img: %v, dpi=%d", img, flagDPI)
+	log.Debugf("receipt-img: dpi=%d", flagDPI)
 	switch flagDPI {
 	case 200:
 		if err := p.pr.PrintImage24bitDouble(img); err != nil {
