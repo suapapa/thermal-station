@@ -144,6 +144,9 @@ func (p *Printer) printBuf(cmdBuf, dataBuf []byte, widthDataLen int) error {
 	// Standard mode
 	p.w.Write([]byte{0x1B, 0x0C})
 
+	// line feed
+	p.w.Write([]byte{0x0A})
+
 	// 가운데 정렬
 	p.w.Write([]byte{0x1B, 0x61, 1})
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"log"
 	"sort"
 	"strings"
 
@@ -91,7 +92,9 @@ func Txt2Img(ff font.Face, w int, txt string) (image.Image, error) {
 		return nil, fmt.Errorf("nil font")
 	}
 
+	log.Println(txt)
 	_, h := MeasureTxt(ff, txt)
+	h = ((h + 7) / 8) * 8
 	dc := gg.NewContext(w, h)
 	dc.SetColor(color.White)
 	dc.Clear()

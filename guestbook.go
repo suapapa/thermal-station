@@ -56,8 +56,8 @@ func subF() error {
 			case "homin-dev/gb":
 				lastPork = time.Now()
 				if gb, err := getGBFromMsg(mqttMsg.Payload()); err != nil {
-					log.Errorf("fail to sub: %v", err)
-				} else {
+					log.Warnf("fail to sub: %v", err)
+				} else if gb != nil {
 					if err := printToReceipt(gb); err != nil {
 						log.Errorf("fail to sub: %v", err)
 					}
@@ -104,7 +104,7 @@ func getGBFromMsg(msgBytes []byte) (*msg.GuestBook, error) {
 func printToReceipt(c *msg.GuestBook) error {
 	pr := NewReceiptPrinter()
 
-	iFF, err := getFont(36)
+	iFF, err := getFont(24)
 	if err != nil {
 		return errors.Wrap(err, "fail to print")
 	}
