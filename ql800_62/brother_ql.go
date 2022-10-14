@@ -32,10 +32,13 @@ func PrintLabel(dev string, img image.Image, rotate int) error {
 	if err := saveImg2Png(img, tmpPngPath); err != nil {
 		return errors.Wrap(err, "fail to print from")
 	}
-	defer os.RemoveAll(tmpPngPath)
-
-	err := exec.Command("sh", "-c",
-		fmt.Sprintf("brother_ql -b linux_kernel -p %s -m QL-800 print -r %d -l 62 %s", dev, rotate, tmpPngPath)).Run()
+	// defer os.RemoveAll(tmpPngPath)
+	cmdStr := fmt.Sprintf(
+		"/home/orangepi/.local/bin/brother_ql -b linux_kernel -p %s -m QL-800 print -r %d -l 62 %s",
+		dev, rotate, tmpPngPath,
+	)
+	// log.Printf("cmdStr: %s", cmdStr)
+	err := exec.Command("sh", "-c", cmdStr).Run()
 	if err != nil {
 		return errors.Wrap(err, "fail to print from")
 	}

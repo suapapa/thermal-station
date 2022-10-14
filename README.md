@@ -22,7 +22,7 @@ curl -F "img=@./_img/Lenna.png" http://opi-hangulclock.local:8080/v1/receipt/img
 ### QR코드 출력
 - `/v1/["receipt"|"label"]/qr`
 ```bash
-curl -X POST -d `{"content": "https://homin.dev"}` http://opi-hangulclock.local:8080/v1/label/qr
+curl -X POST -d '{"content": "https://homin.dev"}' http://opi-hangulclock.local:8080/v1/label/qr
 ```
 
 
