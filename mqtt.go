@@ -14,7 +14,7 @@ import (
 type Config struct {
 	ClientID           string
 	Host               string
-	Port               int
+	Port               string
 	Username, Password string
 	CaCert             string
 }
@@ -36,7 +36,7 @@ func connectBrokerByWSS(config *Config) (mqtt.Client, error) {
 	tlsConfig.SessionTicketsDisabled = true
 
 	opts := mqtt.NewClientOptions()
-	broker := fmt.Sprintf("wss://%s:%d/mqtt", config.Host, config.Port)
+	broker := fmt.Sprintf("wss://%s:%s", config.Host, config.Port)
 	opts.AddBroker(broker)
 	opts.SetUsername(config.Username)
 	opts.SetPassword(config.Password)

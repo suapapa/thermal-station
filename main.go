@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -55,14 +56,21 @@ func main() {
 
 	ctx, cancelF := context.WithCancel(context.Background())
 	defer cancelF()
-	conf := Config{
-		Host:     "homin.dev",
-		Port:     9001,
-		Username: os.Getenv("MQTT_USERNAME"),
-		Password: os.Getenv("MQTT_PASSWORD"),
-		ClientID: fmt.Sprintf("%s-%s", programName, programVer),
+
+	if mqttURL, err := url.Parse(os.Getenv("MQTT_URL")); err != nil {
+		log.Fatal(err)
+	} else {
+		mqttHost := mqttURL.Hostname()
+		mqttPort := mqttURL.Port()
+		conf := Config{
+			Host:     mqttHost,
+			Port:     mqttPort,
+			Username: os.Getenv("MQTT_USERNAME"),
+			Password: os.Getenv("MQTT_PASSWORD"),
+			ClientID: fmt.Sprintf("%s-%s", programName, programVer),
+		}
+		go guestbook(ctx, conf)
 	}
-	go guestbook(ctx, conf)
 
 	stopC := make(chan interface{})
 	<-stopC
