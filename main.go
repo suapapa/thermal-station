@@ -60,9 +60,11 @@ func main() {
 	if mqttURL, err := url.Parse(os.Getenv("MQTT_URL")); err != nil {
 		log.Fatal(err)
 	} else {
+		mqttScheme := mqttURL.Scheme
 		mqttHost := mqttURL.Hostname()
 		mqttPort := mqttURL.Port()
 		conf := Config{
+			Scheme:   mqttScheme,
 			Host:     mqttHost,
 			Port:     mqttPort,
 			Username: os.Getenv("MQTT_USERNAME"),

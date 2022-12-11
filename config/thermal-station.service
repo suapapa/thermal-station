@@ -4,6 +4,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
+Environment="MQTT_URL=your_mqtt_url"
 Environment="MQTT_USERNAME=your_mqtt_id"
 Environment="MQTT_PASSWORD=your_mqtt_pass"
 Environment="GIN_MODE=release"
