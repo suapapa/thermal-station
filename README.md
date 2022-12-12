@@ -8,18 +8,28 @@ This project combines following projects:
 ## API
 
 ### 주문 목록
+
 - `/v1/["receipt"|"label"]/ord`
 
 ### 주소 출력
+
 - `/v1/["receipt"|"label"]/addr`
+```bash
+curl -X POST \
+  -d '{"line1": "경기 성남시 분당구 판교역로 235 (에이치스퀘어 엔동)", "line2": "7층", "name": "카카오엔트프라이즈", "rotation": true}' \
+  http://opi-hangulclock.local:8080/v1/label/addr
+
+```
 
 ### 이미지 출력
+
 - `/v1/["receipt"|"label"]/img`
 ```bash
 curl -F "img=@./_img/Lenna.png" http://opi-hangulclock.local:8080/v1/receipt/img
 ```
 
 ### QR코드 출력
+
 - `/v1/["receipt"|"label"]/qr`
 ```bash
 curl -X POST -d '{"content": "https://homin.dev"}' http://opi-hangulclock.local:8080/v1/label/qr

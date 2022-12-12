@@ -38,12 +38,12 @@ func (lp *LabelPrinter) PrintAddr(addr *input.Addr) error {
 	var err error
 	switch addr.Vertical {
 	case false: // From
-		if img, err = drawAddressFrom(-1, addr); err != nil {
+		if img, err = drawAddressFrom(ql800_62.MaxWidth, addr); err != nil {
 			return errors.Wrap(err, "fail to print label addr")
 		}
 		return lp.printImg(img, 0)
 	default: // case true: // To
-		if img, err = drawAddressTo(-1, addr); err != nil {
+		if img, err = drawAddressTo(ql800_62.MaxWidth, addr); err != nil {
 			return errors.Wrap(err, "fail to print label addr")
 		}
 		return lp.printImg(img, 90)
