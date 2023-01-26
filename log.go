@@ -1,15 +1,19 @@
 package main
 
 import (
+	"net"
 	"os"
 	"time"
 
+	"github.com/evalphobia/logrus_fluent"
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 var (
 	log *logrus.Entry
+
+	fluentForwordAddr = os.Getenv("FLUENT_FORWARD_ADDR")
 )
 
 func init() {
@@ -31,6 +35,28 @@ func initLogger() {
 		"program":  programName,
 		"ver":      programVer,
 	})
+
+	// fluent hook
+	flAddr, err := net.ResolveTCPAddr("tcp", fluentForwordAddr)
+	if err != nil {
+		log.Printf("fail to resolve fluent forword address: %s", err)
+	}
+	if flAddr.IP != nil && err != nil {
+		fluentHook, err := logrus_fluent.NewWithConfig(logrus_fluent.Config{
+			Host: flAddr.IP.String(),
+			Port: flAddr.Port,
+		})
+		if err != nil {
+			panic(err)
+		}
+		fluentHook.SetMessageField("message")
+		fluentHook.SetLevels([]logrus.Level{
+			logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel, logrus.WarnLevel,
+			logrus.InfoLevel,
+		})
+		fluentHook.SetTag("app." + programName)
+		logger.AddHook(fluentHook)
+	}
 }
 
 // log formatter to print log in KST timezone

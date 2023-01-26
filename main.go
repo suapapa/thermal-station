@@ -28,7 +28,8 @@ var (
 )
 
 func main() {
-	log.Infof("%s-%s", programName, programVer)
+	log.WithField("alert", "telegram").Infof("%s-%s start", programName, programVer)
+	log.WithField("alert", "telegram").Infof("%s-%s stop", programName, programVer)
 
 	flag.IntVar(&flagDPI, "dpi", 200, "receipt printer DPI (100 or 200)")
 	flag.StringVar(&flagSerialDev, "s", "/dev/ttyACM0", "serial device")
