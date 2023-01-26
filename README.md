@@ -35,6 +35,9 @@ curl -F "img=@./_img/Lenna.png" http://opi-hangulclock.local:8080/v1/receipt/img
 curl -X POST -d '{"content": "https://homin.dev"}' http://opi-hangulclock.local:8080/v1/label/qr
 ```
 
+Reference:
+
+- [Barcode Contents](https://github.com/zxing/zxing/wiki/Barcode-Contents)
 
 ## MQTT
 
