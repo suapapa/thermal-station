@@ -5,6 +5,14 @@ This project combines following projects:
 - [pr_label](https://github.com/suapapa/pr_label) : Print address label on ql800, brother's label printer (uing brother-ql)
 - [gb-noti](https://github.com/suapapa/gb-noti) : Print guestboot on receipt printer
 
+## Prerequirement
+
+```
+uv init thermal-station
+cd thernal-station
+uv add brother-ql
+```
+
 ## API
 
 ### 주문 목록

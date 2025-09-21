@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -28,16 +29,18 @@ func PrintLabel(dev string, img image.Image, rotate int) error {
 		img = resize.Resize(uint(w), uint(h), img, resize.Lanczos3)
 	}
 
-	// log.Printf("save label image to %s", tmpPngPath)
+	log.Printf("save label image to %s", tmpPngPath)
 	if err := saveImg2Png(img, tmpPngPath); err != nil {
+		log.Printf("fail to save label image to %s", tmpPngPath)
 		return errors.Wrap(err, "fail to print from")
 	}
 	// defer os.RemoveAll(tmpPngPath)
 	cmdStr := fmt.Sprintf(
-		"/home/orangepi/.local/bin/brother_ql -b linux_kernel -p %s -m QL-800 print -r %d -l 62 %s",
+		"/home/admin/.local/bin/uv run brother_ql -b linux_kernel -p %s -m QL-800 print -r %d -l 62 %s",
 		dev, rotate, tmpPngPath,
 	)
-	// log.Printf("cmdStr: %s", cmdStr)
+	log.Printf("cmdStr: %s", cmdStr)
+
 	err := exec.Command("sh", "-c", cmdStr).Run()
 	if err != nil {
 		return errors.Wrap(err, "fail to print from")
@@ -46,6 +49,7 @@ func PrintLabel(dev string, img image.Image, rotate int) error {
 }
 
 func saveImg2Png(img image.Image, pngFN string) error {
+	log.Printf("save label image to %s", pngFN)
 	f, err := os.Create(pngFN)
 	if err != nil {
 		return errors.Wrap(err, "fail to savePNG")

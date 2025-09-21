@@ -31,9 +31,10 @@ func getPrinter(printerType string) Printer {
 		}
 		labelPrinter = NewLabelPrinter(flagLabelPrinterDev)
 		return labelPrinter
+	default:
+		log.Errorf("unknown printer, %s", printerType)
+		return NewLogoutPrinter()
 	}
-	log.Errorf("unknown printer, %s", printerType)
-	return NewLogoutPrinter()
 }
 
 // ---
