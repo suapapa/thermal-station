@@ -1,6 +1,6 @@
 module github.com/suapapa/thermal-station
 
-go 1.19
+go 1.27.0
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.2
